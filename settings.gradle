@@ -3,5 +3,5 @@ plugins {
 }
 
 rootProject.name = 'BungeeServerQueue'
-include('queue-network', 'queue-bungee', 'queue-common')
+include('queue-network', 'queue-bungee', 'queue-common', 'queue-api')
 
