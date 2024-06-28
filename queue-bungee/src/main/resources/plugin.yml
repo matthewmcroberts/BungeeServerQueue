@@ -1,0 +1,5 @@
+name: ${pluginName}
+version: ${pluginVersion}
+main: ${mainClass}
+description: ${description}
+author: ${author}
