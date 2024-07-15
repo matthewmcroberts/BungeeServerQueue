@@ -1,4 +1,4 @@
-package com.matthew.plugin;
+package com.matthew.plugin.commands;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
