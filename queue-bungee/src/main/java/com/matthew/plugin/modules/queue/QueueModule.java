@@ -9,7 +9,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class QueueModule implements ServerModule {
 
     //Allocated servers are not released, therefore WeakHashMap will not work.
