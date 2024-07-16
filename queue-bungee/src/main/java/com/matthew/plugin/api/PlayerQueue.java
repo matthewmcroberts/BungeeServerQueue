@@ -3,7 +3,11 @@ package com.matthew.plugin.api;
 import com.matthew.plugin.queue.QueuedPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-
+/**
+ * Will be useful once Non-Priority and Non-Blocking queues are implemented
+ * Definitely going to need to make some adjustments though as this currently is tightly coupled with QueuedPlayer
+ * Current idea is to implement a wrapper
+ */
 public interface PlayerQueue {
 
     /**

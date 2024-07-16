@@ -1,6 +1,6 @@
 package com.matthew.plugin.modules.manager;
 
-import com.matthew.plugin.api.ServerModule;
+import com.matthew.plugin.api.Module;
 import lombok.Getter;
 
 import java.util.HashSet;
@@ -8,30 +8,30 @@ import java.util.Set;
 
 
 @Getter
-public class ServerModuleManager implements ServerModule {
+public class ModuleManager implements Module {
 
-    private static ServerModuleManager instance;
+    private static ModuleManager instance;
 
-    private final Set<ServerModule> registeredModules;
+    private final Set<Module> registeredModules;
 
-    private ServerModuleManager() {
+    private ModuleManager() {
         registeredModules = new HashSet<>();
     }
 
-    public static ServerModuleManager getInstance() {
+    public static ModuleManager getInstance() {
         if(instance == null) {
-            instance = new ServerModuleManager();
+            instance = new ModuleManager();
         }
         return instance;
     }
 
-    public ServerModuleManager registerModule(ServerModule module) {
+    public ModuleManager registerModule(Module module) {
         registeredModules.add(module);
         return this; //used for method chaining in BungeeQueuePlugin#onEnable
     }
 
-    public <T extends ServerModule> T getRegisteredModule(Class<T> clazz) {
-        for(ServerModule module: registeredModules) {
+    public <T extends Module> T getRegisteredModule(Class<T> clazz) {
+        for(Module module: registeredModules) {
             if(clazz.isInstance(module)) {
                 return clazz.cast(module);
             }
@@ -41,14 +41,14 @@ public class ServerModuleManager implements ServerModule {
 
     @Override
     public void setUp() {
-        for(ServerModule module: registeredModules) {
+        for(Module module: registeredModules) {
             module.setUp();
         }
     }
 
     @Override
     public void teardown() {
-        for(ServerModule module: registeredModules) {
+        for(Module module: registeredModules) {
             module.teardown();
         }
     }

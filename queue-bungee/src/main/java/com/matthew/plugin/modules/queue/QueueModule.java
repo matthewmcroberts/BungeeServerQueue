@@ -2,14 +2,13 @@ package com.matthew.plugin.modules.queue;
 
 import com.matthew.plugin.queue.PlayerPriorityBlockingQueue;
 import com.matthew.plugin.queue.QueuedPlayer;
-import com.matthew.plugin.api.ServerModule;
-import lombok.RequiredArgsConstructor;
+import com.matthew.plugin.api.Module;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class QueueModule implements ServerModule {
+public class QueueModule implements Module {
 
     //Allocated servers are not released, therefore WeakHashMap will not work.
     private final Map<String, PlayerPriorityBlockingQueue> queues = new HashMap<>();

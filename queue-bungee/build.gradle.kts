@@ -7,7 +7,7 @@ dependencies {
 }
 
 tasks.processResources {
-    filesMatching("plugin.yml") {
+    filesMatching("bungee.yml") {
         expand(
             mapOf(
                 "pluginName" to rootProject.extra["pluginName"],

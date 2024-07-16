@@ -1,6 +1,6 @@
 package com.matthew.plugin.api;
 
-public interface ServerModule  {
+public interface Module {
 
     /**
      * Sets up the module.
