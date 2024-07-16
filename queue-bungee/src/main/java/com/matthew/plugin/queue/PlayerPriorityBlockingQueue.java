@@ -4,8 +4,6 @@ import com.matthew.plugin.api.PlayerQueue;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Optional;
 
 
 public class PlayerPriorityBlockingQueue implements PlayerQueue {
