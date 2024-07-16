@@ -38,30 +38,27 @@ public class PlayerPriorityBlockingQueue implements PlayerQueue {
 
     @Override
     public int getPlayerPosition(ProxiedPlayer player) {
-        AtomicInteger position = new AtomicInteger();
-
-        int playerPosition = queue.stream()
-                .sorted() // Ensure the stream is sorted according to priority
-                .map(QueuedPlayer::getPlayer)
-                .peek(p -> {
-                    if (p.equals(player)) {
-                        position.set(position.get() + 1);
-                    }
-                    position.incrementAndGet();
-                })
-                .toList()
-                .indexOf(player);
-
-        // Adjust to 1-based index or handle not found case
-        return playerPosition == -1 ? -1 : playerPosition + 1;
+        synchronized (queue) {
+            int position = 1;
+            for (QueuedPlayer queuedPlayer : queue) {
+                if (queuedPlayer.getPlayer().equals(player)) {
+                    return position;
+                }
+                position++;
+            }
+        }
+        return -1;
     }
 
     @Override
     public QueuedPlayer find(ProxiedPlayer player) {
-        Optional<QueuedPlayer> result = queue.stream()
-                .filter(queuedPlayer -> queuedPlayer.getPlayer().equals(player))
-                .findFirst();
-
-        return result.orElse(null); // Return null if the player is not found in the queue
+        synchronized (queue) {
+            for (QueuedPlayer queuedPlayer : queue) {
+                if (queuedPlayer.getPlayer().equals(player)) {
+                    return queuedPlayer;
+                }
+            }
+        }
+        return null;
     }
 }
