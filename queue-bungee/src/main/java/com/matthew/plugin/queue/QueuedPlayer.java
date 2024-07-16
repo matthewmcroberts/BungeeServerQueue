@@ -1,7 +1,9 @@
-package com.matthew.plugin;
+package com.matthew.plugin.queue;
 
+import lombok.Getter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+@Getter
 public class QueuedPlayer implements Comparable<QueuedPlayer> {
 
     private final ProxiedPlayer player;
@@ -9,15 +11,7 @@ public class QueuedPlayer implements Comparable<QueuedPlayer> {
 
     public QueuedPlayer(ProxiedPlayer player) {
         this.player = player;
-        this.priority = 0;
-    }
-
-    public ProxiedPlayer getPlayer() {
-        return player;
-    }
-
-    public int getPriority() {
-        return priority;
+        this.priority = calculatePriority(player);
     }
 
     @Override
@@ -44,6 +38,15 @@ public class QueuedPlayer implements Comparable<QueuedPlayer> {
     @Override
     public int hashCode() {
         return player.hashCode();
+    }
+
+    private int calculatePriority(ProxiedPlayer player) {
+        if(player.hasPermission("queue.priority.highest")) {
+            return 1;
+        } else if(player.hasPermission("queue.priority.medium")) {
+            return 2;
+        }
+        return 3; // Normal priority
     }
 }
 
