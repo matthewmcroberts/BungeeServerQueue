@@ -16,7 +16,7 @@ public class UTF8ResourceBundleControl extends Control {
 
     @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-            throws IllegalAccessException, InstantiationException, java.io.IOException {
+            throws java.io.IOException {
         // The below code is copied from the default Control implementation.
         String bundleName = toBundleName(baseName, locale);
         String resourceName = toResourceName(bundleName, "properties");

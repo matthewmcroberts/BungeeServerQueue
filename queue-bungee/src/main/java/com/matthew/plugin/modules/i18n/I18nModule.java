@@ -1,14 +1,22 @@
 package com.matthew.plugin.modules.i18n;
 
 import com.matthew.plugin.api.Module;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class I18nModule implements Module {
+
     private final Map<Locale, ResourceBundle> translations = new ConcurrentHashMap<>();
+
     private final Set<Locale> availableLocales = new HashSet<>();
+
+    private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+    private final String baseName;
 
     public void addTranslation(Locale locale, ResourceBundle bundle, boolean overwrite) {
         if (overwrite || !translations.containsKey(locale)) {
@@ -38,7 +46,8 @@ public class I18nModule implements Module {
         return key;
     }
 
-    public void loadTranslations(String baseName, ClassLoader loader) {
+    @Override
+    public void setUp() {
         for (Locale locale : getAvailableLocales()) {
             ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale, loader, UTF8ResourceBundleControl.get());
             ResourceBundle processedBundle = processResourceBundle(bundle);
@@ -47,13 +56,8 @@ public class I18nModule implements Module {
     }
 
     @Override
-    public void setUp() {
-
-    }
-
-    @Override
     public void teardown() {
-
+        // No allocated resources in need of teardown
     }
 
     private ResourceBundle processResourceBundle(ResourceBundle bundle) {
