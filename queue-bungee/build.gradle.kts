@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation("io.github.waterfallmc:waterfall-api:1.20-R0.3-SNAPSHOT")
+    implementation("org.yaml:snakeyaml:2.0")
 }
 
 tasks.processResources {
@@ -17,11 +18,5 @@ tasks.processResources {
                 "author" to rootProject.extra["author"]
             )
         )
-    }
-}
-
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = rootProject.extra["mainClass"]
     }
 }
