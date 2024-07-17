@@ -22,7 +22,6 @@ public class MessageModule implements Module {
 
     public String buildMessage(String key, Object... args) {
         String message = cache.get(key);
-        System.out.println(message);
 
         if (message == null) {
             plugin.getLogger().warning("Message key '" + key + "' not found");
