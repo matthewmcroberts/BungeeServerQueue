@@ -2,7 +2,7 @@ package com.matthew.plugin.commands;
 
 
 import com.matthew.plugin.modules.chat.MessageModule;
-import com.matthew.plugin.modules.manager.ModuleManager;
+import com.matthew.plugin.modules.ModuleManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

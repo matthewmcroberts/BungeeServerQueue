@@ -40,9 +40,6 @@ public class MessageModule implements Module {
 
     @Override
     public void setUp() {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
-        }
 
         File configFile = new File(plugin.getDataFolder(), "messages.yml");
 

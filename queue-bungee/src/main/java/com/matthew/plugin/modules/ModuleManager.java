@@ -1,4 +1,4 @@
-package com.matthew.plugin.modules.manager;
+package com.matthew.plugin.modules;
 
 import com.matthew.plugin.api.Module;
 import lombok.Getter;

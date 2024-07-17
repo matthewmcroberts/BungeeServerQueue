@@ -1,6 +1,6 @@
 package com.matthew.plugin.listeners;
 
-import com.matthew.plugin.modules.manager.ModuleManager;
+import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.queue.QueuedPlayer;
 import lombok.RequiredArgsConstructor;
