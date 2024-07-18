@@ -52,6 +52,10 @@ public class ServerModule implements Module {
         }
     }
 
+    public ServerStatus checkIfExists(@NonNull final String serverName) {
+        return proxy.getServerInfo(serverName) == null ? ServerStatus.NOT_FOUND : ServerStatus.EXISTS;
+    }
+
     @Override
     public void setUp() {
         proxy = ProxyServer.getInstance();
@@ -60,9 +64,5 @@ public class ServerModule implements Module {
     @Override
     public void teardown() {
         // No allocated resources in need of being released
-    }
-
-    private ServerStatus checkIfExists(@NonNull final String serverName) {
-        return proxy.getServerInfo(serverName) == null ? ServerStatus.NOT_FOUND : ServerStatus.EXISTS;
     }
 }

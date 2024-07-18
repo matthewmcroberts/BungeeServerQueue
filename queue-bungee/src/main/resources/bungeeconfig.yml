@@ -1,0 +1,18 @@
+#Primary server a player is sent to whilst connecting to proxy
+#This will be the server where players queue to join another server on the proxy
+MAINSERVER: "lobby"
+
+#Servers that will implement the queue
+#IMPORTANT: Servers must be registered in proxy's config (bungee configuration file) in order to be correctly detected
+#by this plugin
+TARGETSERVERS:
+  TEST:
+    NAME: "test"
+    MAXSLOTS: 20
+  GAME:
+    NAME: "game"
+    MAXSLOTS: 20
+
+#Queue notification that appears above a player's hotbar
+ACTIONBAR:
+  TEXT: "You are in queue"
