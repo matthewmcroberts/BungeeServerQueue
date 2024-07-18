@@ -1,10 +1,17 @@
 package com.matthew.plugin.queue;
 
+import com.matthew.plugin.modules.ModuleManager;
+import com.matthew.plugin.modules.settings.SettingsConstants;
+import com.matthew.plugin.modules.settings.SettingsModule;
 import lombok.Getter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.Optional;
+
 @Getter
 public class QueuedPlayer implements Comparable<QueuedPlayer> {
+
+    private final SettingsModule settings = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
 
     private final ProxiedPlayer player;
     private final int priority;
@@ -41,9 +48,12 @@ public class QueuedPlayer implements Comparable<QueuedPlayer> {
     }
 
     private int calculatePriority(ProxiedPlayer player) {
-        if(player.hasPermission("queue.priority.highest")) {
+        Optional<String> priorityHigh = settings.getString(SettingsConstants.PERMISSION_PRIORITY_HIGH_NODE);
+        Optional<String> priorityMedium = settings.getString(SettingsConstants.PERMISSION_PRIORITY_MEDIUM_NODE);
+
+        if(priorityHigh.isPresent() && player.hasPermission(priorityHigh.get())) {
             return 1;
-        } else if(player.hasPermission("queue.priority.medium")) {
+        } else if(priorityMedium.isPresent() && player.hasPermission(priorityMedium.get())) {
             return 2;
         }
         return 3; // Normal priority
