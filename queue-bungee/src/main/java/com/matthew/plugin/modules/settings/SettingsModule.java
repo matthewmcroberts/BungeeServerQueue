@@ -2,18 +2,18 @@ package com.matthew.plugin.modules.settings;
 
 import com.matthew.plugin.api.Module;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Optional;
+import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class SettingsModule implements Module {
@@ -23,28 +23,35 @@ public class SettingsModule implements Module {
     @Getter
     private Configuration config;
 
-    @Nullable
-    public Boolean getBoolean(@NonNull final String path) {
-        if (config.contains(path)) {
-            return config.getBoolean(path);
-        }
-        return null;
+    public Optional<Integer> getSlots(String serverName) {
+        serverName = serverName.toUpperCase();
+        return getInteger(SettingsConstants.CONFIG_TARGET_SERVERS + "." + serverName + "." + SettingsConstants.CONFIG_MAX_SLOTS);
     }
 
-    @Nullable
-    public Integer getInteger(@NonNull final String path) {
-        if (config.contains(path)) {
-            return config.getInt(path);
-        }
-        return null;
+    public Optional<String> getNameExact(String serverName) {
+        serverName = serverName.toUpperCase();
+        return getString(SettingsConstants.CONFIG_TARGET_SERVERS + "." + serverName + "." + SettingsConstants.CONFIG_SERVER_NAME);
     }
 
-    @Nullable
-    public String getString(@NonNull final String path) {
+    public Optional<Boolean> getBoolean(final String path) {
         if (config.contains(path)) {
-            return config.getString(path);
+            return Optional.of(config.getBoolean(path));
         }
-        return null;
+        return Optional.empty();
+    }
+
+    public Optional<Integer> getInteger(final String path) {
+        if (config.contains(path)) {
+            return Optional.of(config.getInt(path));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<String> getString(final String path) {
+        if (config.contains(path)) {
+            return Optional.of(config.getString(path));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -53,24 +60,26 @@ public class SettingsModule implements Module {
         File configFile = new File(plugin.getDataFolder(), PATH);
 
         if (!configFile.exists()) {
-            try (InputStream in = this.getClass().getResourceAsStream(PATH)) {
+            try (InputStream in = this.getClass().getResourceAsStream("/" + PATH)) {
                 if (in != null) {
                     Files.copy(in, configFile.toPath());
+                } else {
+                    plugin.getLogger().log(Level.SEVERE, "Resource " + PATH + " not found in the plugin jar.");
                 }
             } catch (IOException e) {
-                plugin.getLogger().info("Unable to copy " + PATH + " to " + configFile.getAbsolutePath());
+                plugin.getLogger().log(Level.SEVERE, "Unable to copy " + PATH + " to " + configFile.getAbsolutePath(), e);
             }
         }
 
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
         } catch (IOException e) {
-            plugin.getLogger().info("Unable to load " + PATH + " to " + configFile.getAbsolutePath());
+            plugin.getLogger().log(Level.SEVERE, "Unable to load configuration file: " + configFile.getAbsolutePath(), e);
         }
     }
 
     @Override
     public void teardown() {
-
+        // Perform any necessary cleanup here
     }
 }

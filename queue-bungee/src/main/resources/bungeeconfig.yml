@@ -16,3 +16,12 @@ TARGETSERVERS:
 #Queue notification that appears above a player's hotbar
 ACTIONBAR:
   TEXT: "You are in queue"
+
+#Permission nodes
+#Permissions assigned to a player will determine their priority in queue
+#Note: Normal queue priority
+PERMISSIONS:
+  PRIORITY:
+    HIGH: "queue.priority.high"
+    MEDIUM: "queue.priority.medium"
+  COMMAND: "queue.command.use"
