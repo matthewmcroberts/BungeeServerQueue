@@ -5,6 +5,7 @@ import com.matthew.plugin.modules.queue.priorityqueue.QueuedPlayer;
 import com.matthew.plugin.api.Module;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,10 @@ public class QueueModule implements Module {
 
     //Allocated servers are not released, therefore WeakHashMap will not work for time being.
     private final Map<String, PlayerPriorityBlockingQueue> queues = new HashMap<>();
+
+    public PlayerPriorityBlockingQueue getQueue(String serverName) {
+        return (queues.get(serverName) != null) ? queues.get(serverName) : null;
+    }
 
     public void addPlayer(String serverName, ProxiedPlayer player) {
         queues.computeIfAbsent(serverName, k -> new PlayerPriorityBlockingQueue()).addPlayer(player);
@@ -59,6 +64,6 @@ public class QueueModule implements Module {
 
     @Override
     public void teardown() {
-        // no allocated resources in need of teardown
+        queues.clear();
     }
 }

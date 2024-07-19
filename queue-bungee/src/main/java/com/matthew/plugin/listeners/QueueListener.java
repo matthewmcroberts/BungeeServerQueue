@@ -16,7 +16,7 @@ public class QueueListener implements Listener {
 
     private final Plugin plugin;
     private final QueueModule module = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
-
+/*
     @EventHandler(priority = EventPriority.HIGH)
     public void onPreLogin(PreLoginEvent event) {
         // Example logic for PreLoginEvent
@@ -60,4 +60,5 @@ public class QueueListener implements Listener {
         ProxiedPlayer player = event.getPlayer();
         // Remove the player from all queues they might be in
     }
+ */
 }

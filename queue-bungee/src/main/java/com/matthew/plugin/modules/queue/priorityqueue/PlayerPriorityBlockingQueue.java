@@ -25,6 +25,10 @@ public class PlayerPriorityBlockingQueue implements PlayerQueue {
         return queue.take();
     }
 
+    public QueuedPlayer getNextPlayer() throws InterruptedException {
+        return queue.peek();
+    }
+
     @Override
     public int getSize() {
         return queue.size();
