@@ -15,6 +15,7 @@ TARGETSERVERS:
 
 #Queue notification that appears above a player's hotbar
 ACTIONBAR:
+  ENABLED: true
   TEXT: "You are in queue"
 
 #Permission nodes

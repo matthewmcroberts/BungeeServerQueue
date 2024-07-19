@@ -13,6 +13,7 @@ public final class SettingsConstants {
     public static String CONFIG_MAX_SLOTS = "MAXSLOTS";
     public static String CONFIG_SERVER_NAME = "NAME";
 
+    public static String CONFIG_ACTIONBAR_ENABLED = "ACTIONBAR.ENABLED";
     public static String CONFIG_ACTIONBAR_TEXT = "ACTIONBAR.TEXT";
 
     //Permission nodes
