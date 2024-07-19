@@ -12,6 +12,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 
@@ -35,11 +36,11 @@ public class ServerModule implements Module {
 
     private ExecutorService executor;
 
-    private final SettingsModule module = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
+    private final SettingsModule settings = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
 
     public CompletableFuture<ServerStatus> checkMainServerStatus() {
         return CompletableFuture.supplyAsync(() -> {
-            final Optional<String> MAIN_SERVER_OPTIONAL = module.getString(SettingsConstants.CONFIG_MAIN_SERVER);
+            final Optional<String> MAIN_SERVER_OPTIONAL = settings.getString(SettingsConstants.CONFIG_MAIN_SERVER);
 
             if (MAIN_SERVER_OPTIONAL.isEmpty()) {
                 throw new MainServerNotConfiguredException("Main server is not configured. Please check your settings.");
@@ -55,6 +56,10 @@ public class ServerModule implements Module {
 
     public ServerStatus checkIfExists(@NonNull final String serverName) {
         return proxy.getServerInfo(serverName) == null ? ServerStatus.NOT_FOUND : ServerStatus.EXISTS;
+    }
+
+    public List<String> getAvailableServers() {
+        return settings.getAvailableServers();
     }
 
     @Override

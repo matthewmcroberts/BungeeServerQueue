@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -21,16 +22,19 @@ public class SettingsModule implements Module {
     private final Plugin plugin;
 
     @Getter
+    private List<String> availableServers;
+
+    @Getter
     private Configuration config;
 
-    public Optional<Integer> getSlots(String serverName) {
-        serverName = serverName.toUpperCase();
-        return getInteger(SettingsConstants.CONFIG_TARGET_SERVERS + "." + serverName + "." + SettingsConstants.CONFIG_MAX_SLOTS);
+    public Optional<Integer> getSlots(String key) {
+        key = key.toUpperCase();
+        return getInteger(SettingsConstants.CONFIG_TARGET_SERVERS + "." + key + "." + SettingsConstants.CONFIG_MAX_SLOTS);
     }
 
-    public Optional<String> getNameExact(String serverName) {
-        serverName = serverName.toUpperCase();
-        return getString(SettingsConstants.CONFIG_TARGET_SERVERS + "." + serverName + "." + SettingsConstants.CONFIG_SERVER_NAME);
+    public Optional<String> getNameExact(String key) {
+        key = key.toUpperCase();
+        return getString(SettingsConstants.CONFIG_TARGET_SERVERS + "." + key + "." + SettingsConstants.CONFIG_SERVER_NAME);
     }
 
     public Optional<Boolean> getBoolean(final String path) {
@@ -76,6 +80,13 @@ public class SettingsModule implements Module {
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Unable to load configuration file: " + configFile.getAbsolutePath(), e);
         }
+
+        final List<String> serverKeys = config.getSection(SettingsConstants.CONFIG_TARGET_SERVERS).getKeys().stream().toList();
+        for(String key : serverKeys) {
+            Optional<String> serverName = getNameExact(key);
+            serverName.ifPresent(availableServers::add);
+        }
+
     }
 
     @Override
