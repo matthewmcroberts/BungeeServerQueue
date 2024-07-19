@@ -18,6 +18,15 @@ public class QueueModule implements Module {
         return (queues.get(serverName) != null) ? queues.get(serverName) : null;
     }
 
+    public PlayerPriorityBlockingQueue getQueue(ProxiedPlayer player) {
+        for (PlayerPriorityBlockingQueue queue : queues.values()) {
+            if (queue.find(player) != null) {
+                return queue;
+            }
+        }
+        return null;
+    }
+
     public void addPlayer(String serverName, ProxiedPlayer player) {
         queues.computeIfAbsent(serverName, k -> new PlayerPriorityBlockingQueue()).addPlayer(player);
     }

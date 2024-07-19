@@ -20,14 +20,10 @@ public class PlayerPriorityQueueJoinEvent extends Event implements Cancellable {
 
     private boolean cancelled;
 
-    private final QueueModule queue = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
+    private final QueueModule module = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
 
     public PlayerPriorityBlockingQueue getQueue() {
-        if(queue.find(serverName, player) == null) {
-            setCancelled(true);
-            return null;
-        }
-        return null;
+        return module.getQueue(player);
     }
 
     @Override
