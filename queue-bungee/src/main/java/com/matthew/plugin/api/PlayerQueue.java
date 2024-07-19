@@ -1,6 +1,6 @@
 package com.matthew.plugin.api;
 
-import com.matthew.plugin.queue.QueuedPlayer;
+import com.matthew.plugin.modules.queue.priorityqueue.QueuedPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**

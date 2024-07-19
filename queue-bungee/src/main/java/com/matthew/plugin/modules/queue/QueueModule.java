@@ -1,7 +1,7 @@
 package com.matthew.plugin.modules.queue;
 
-import com.matthew.plugin.queue.PlayerPriorityBlockingQueue;
-import com.matthew.plugin.queue.QueuedPlayer;
+import com.matthew.plugin.modules.queue.priorityqueue.PlayerPriorityBlockingQueue;
+import com.matthew.plugin.modules.queue.priorityqueue.QueuedPlayer;
 import com.matthew.plugin.api.Module;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

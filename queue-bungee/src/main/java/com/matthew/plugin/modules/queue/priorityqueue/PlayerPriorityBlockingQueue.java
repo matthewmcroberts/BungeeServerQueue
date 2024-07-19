@@ -1,4 +1,4 @@
-package com.matthew.plugin.queue;
+package com.matthew.plugin.modules.queue.priorityqueue;
 
 import com.matthew.plugin.api.PlayerQueue;
 import lombok.NonNull;

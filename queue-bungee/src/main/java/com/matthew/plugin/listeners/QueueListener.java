@@ -2,7 +2,7 @@ package com.matthew.plugin.listeners;
 
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
-import com.matthew.plugin.queue.QueuedPlayer;
+import com.matthew.plugin.modules.queue.priorityqueue.QueuedPlayer;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
