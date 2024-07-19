@@ -1,6 +1,10 @@
 package com.matthew.plugin.modules.server;
 
 import com.matthew.plugin.api.Module;
+import com.matthew.plugin.exceptions.MainServerNotConfiguredException;
+import com.matthew.plugin.modules.ModuleManager;
+import com.matthew.plugin.modules.settings.SettingsConstants;
+import com.matthew.plugin.modules.settings.SettingsModule;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ProxyServer;
@@ -8,6 +12,8 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Optional;
+import java.util.concurrent.*;
 
 public class ServerModule implements Module {
 
@@ -27,12 +33,61 @@ public class ServerModule implements Module {
 
     private ProxyServer proxy;
 
-    public ServerStatus checkMainServerStatus() {
-        //will implement after I implement config settings that explicitly states the main server name
-        return ServerStatus.ONLINE;
+    private ExecutorService executor;
+
+    private final SettingsModule module = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
+
+    public CompletableFuture<ServerStatus> checkMainServerStatus() {
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<String> MAIN_SERVER_OPTIONAL = module.getString(SettingsConstants.CONFIG_MAIN_SERVER);
+
+            if (MAIN_SERVER_OPTIONAL.isEmpty()) {
+                throw new MainServerNotConfiguredException("Main server is not configured. Please check your settings.");
+            }
+
+            return checkServerStatus(MAIN_SERVER_OPTIONAL.get());
+        }, executor);
     }
 
-    public ServerStatus checkQueueServerStatus(@NonNull final String serverName) {
+    public CompletableFuture<ServerStatus> checkQueueServerStatus(@NonNull final String serverName) {
+        return CompletableFuture.supplyAsync(() -> checkServerStatus(serverName), executor);
+    }
+
+    public ServerStatus checkIfExists(@NonNull final String serverName) {
+        return proxy.getServerInfo(serverName) == null ? ServerStatus.NOT_FOUND : ServerStatus.EXISTS;
+    }
+
+    @Override
+    public void setUp() {
+        proxy = ProxyServer.getInstance();
+
+        executor = new ThreadPoolExecutor(
+                10,
+                50,
+                60L, TimeUnit.SECONDS,
+                new SynchronousQueue<>()
+        );
+    }
+
+    @Override
+    public void teardown() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    proxy.getLogger().severe("Executor service did not terminate");
+                }
+            }
+        } catch (InterruptedException ie) {
+            executor.shutdownNow();
+
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private ServerStatus checkServerStatus(String serverName) {
         ServerStatus existenceStatus = checkIfExists(serverName);
         if (existenceStatus == ServerStatus.NOT_FOUND) {
             proxy.getLogger().warning("'" + serverName + "' not found. Please check your bungee configuration.");
@@ -50,19 +105,5 @@ public class ServerModule implements Module {
             proxy.getLogger().warning("'" + serverName + "' is offline: " + e.getMessage());
             return ServerStatus.OFFLINE;
         }
-    }
-
-    public ServerStatus checkIfExists(@NonNull final String serverName) {
-        return proxy.getServerInfo(serverName) == null ? ServerStatus.NOT_FOUND : ServerStatus.EXISTS;
-    }
-
-    @Override
-    public void setUp() {
-        proxy = ProxyServer.getInstance();
-    }
-
-    @Override
-    public void teardown() {
-        // No allocated resources in need of being released
     }
 }
