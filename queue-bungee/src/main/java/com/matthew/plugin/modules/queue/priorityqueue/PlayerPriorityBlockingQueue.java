@@ -1,13 +1,13 @@
 package com.matthew.plugin.modules.queue.priorityqueue;
 
-import com.matthew.plugin.api.PlayerQueue;
+import com.matthew.plugin.api.PriorityQueue;
 import lombok.NonNull;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Iterator;
 import java.util.concurrent.PriorityBlockingQueue;
 
-public class PlayerPriorityBlockingQueue implements PlayerQueue {
+public class PlayerPriorityBlockingQueue implements PriorityQueue {
 
     private final PriorityBlockingQueue<QueuedPlayer> queue;
 
@@ -25,6 +25,7 @@ public class PlayerPriorityBlockingQueue implements PlayerQueue {
         return queue.take();
     }
 
+    @Override
     public QueuedPlayer getNextPlayer() throws InterruptedException {
         return queue.peek();
     }
@@ -62,6 +63,7 @@ public class PlayerPriorityBlockingQueue implements PlayerQueue {
         return null;
     }
 
+    @Override
     public boolean removePlayer(@NonNull ProxiedPlayer player) {
         Iterator<QueuedPlayer> iterator = queue.iterator();
         while (iterator.hasNext()) {
@@ -77,6 +79,7 @@ public class PlayerPriorityBlockingQueue implements PlayerQueue {
     /*
     This will reevaluate the player's current permissions and determine if a priority node has changed
      */
+    @Override
     public boolean updatePlayerPriority(@NonNull ProxiedPlayer player) {
         boolean removed = removePlayer(player);
         if (removed) {
