@@ -24,7 +24,7 @@ public interface PlayerQueue {
      * @return The next player in the queue.
      * @throws InterruptedException if interrupted while waiting.
      */
-    QueuedPlayer getNextPlayer() throws InterruptedException;
+    QueuedPlayer takeNextPlayer() throws InterruptedException;
 
     /**
      * Returns the number of players currently in the queue.

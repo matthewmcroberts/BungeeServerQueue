@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class QueueModule implements Module {
 
-    //Allocated servers are not released, therefore WeakHashMap will not work.
+    //Allocated servers are not released, therefore WeakHashMap will not work for time being.
     private final Map<String, PlayerPriorityBlockingQueue> queues = new HashMap<>();
 
     public void addPlayer(String serverName, ProxiedPlayer player) {
@@ -19,7 +19,7 @@ public class QueueModule implements Module {
 
     public QueuedPlayer getNextPlayer(String serverName) throws InterruptedException {
         PlayerPriorityBlockingQueue queue = queues.get(serverName);
-        return queue != null ? queue.getNextPlayer() : null;
+        return queue != null ? queue.takeNextPlayer() : null;
     }
 
     public int getSize(String serverName) {
@@ -40,6 +40,16 @@ public class QueueModule implements Module {
     public QueuedPlayer find(String serverName, ProxiedPlayer player) {
         PlayerPriorityBlockingQueue queue = queues.get(serverName);
         return queue != null ? queue.find(player) : null;
+    }
+
+    public boolean updatePlayerPriority (String serverName, ProxiedPlayer player) {
+        PlayerPriorityBlockingQueue queue = queues.get(serverName);
+        return queue != null && queue.updatePlayerPriority(player);
+    }
+
+    public boolean removePlayer(String serverName, ProxiedPlayer player) {
+        PlayerPriorityBlockingQueue queue = queues.get(serverName);
+        return queue != null && queue.removePlayer(player);
     }
 
     @Override
