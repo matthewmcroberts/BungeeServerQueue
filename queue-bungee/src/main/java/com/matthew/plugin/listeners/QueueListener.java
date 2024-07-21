@@ -2,8 +2,10 @@ package com.matthew.plugin.listeners;
 
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
+import com.matthew.plugin.modules.queue.events.PlayerPriorityQueueJoinEvent;
 import com.matthew.plugin.modules.queue.priorityqueue.QueuedPlayer;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
@@ -16,6 +18,12 @@ public class QueueListener implements Listener {
 
     private final Plugin plugin;
     private final QueueModule module = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onQueueJoin(PlayerPriorityQueueJoinEvent e) {
+        ProxiedPlayer player = e.getPlayer();
+        player.sendMessage(new TextComponent("Queue join event fired"));
+    }
 /*
     @EventHandler(priority = EventPriority.HIGH)
     public void onPreLogin(PreLoginEvent event) {

@@ -15,6 +15,10 @@ public class PlayerPriorityBlockingQueue implements PriorityQueue {
         queue = new PriorityBlockingQueue<>();
     }
 
+    /**
+     * TODO: ADD DUPLICATES CHECKS. PROBABLY DON'T WANT TO USE find(), better having a set of uuids or names to loop
+     */
+
     @Override
     public void addPlayer(@NonNull ProxiedPlayer player) {
         queue.put(new QueuedPlayer(player));
