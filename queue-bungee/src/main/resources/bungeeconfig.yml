@@ -20,7 +20,7 @@ ACTIONBAR:
 
 #Permission nodes
 #Permissions assigned to a player will determine their priority in queue
-#Note: Normal queue priority
+#Note: Normal queue priority currently requires no node (probably going to change)
 PERMISSIONS:
   PRIORITY:
     HIGH: "queue.priority.high"
