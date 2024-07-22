@@ -1,5 +1,6 @@
 package com.matthew.plugin.modules.queue.events;
 
+import com.matthew.plugin.api.PriorityQueue;
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.modules.queue.priorityqueue.PlayerPriorityBlockingQueue;
@@ -22,7 +23,7 @@ public class PlayerPriorityQueueLeaveEvent extends Event implements Cancellable 
 
     private final QueueModule module = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
 
-    public PlayerPriorityBlockingQueue getQueue() {
+    public PriorityQueue getQueue() {
         return module.getQueue(player);
     }
 
