@@ -19,6 +19,9 @@ public class QueueListener implements Listener {
     private final Plugin plugin;
     private final QueueModule module = ModuleManager.getInstance().getRegisteredModule(QueueModule.class);
 
+    /*
+    TODO: make this display actionbar if enabled in config
+     */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onQueueJoin(PlayerPriorityQueueJoinEvent e) {
         ProxiedPlayer player = e.getPlayer();
