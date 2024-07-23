@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -81,12 +82,15 @@ public class SettingsModule implements Module {
             plugin.getLogger().log(Level.SEVERE, "Unable to load configuration file: " + configFile.getAbsolutePath(), e);
         }
 
+        this.availableServers = new ArrayList<>();
+
         final List<String> serverKeys = config.getSection(SettingsConstants.CONFIG_TARGET_SERVERS).getKeys().stream().toList();
+
         for(String key : serverKeys) {
             Optional<String> serverName = getNameExact(key);
             serverName.ifPresent(availableServers::add);
         }
-
+        plugin.getLogger().log(Level.INFO, "Loaded " + availableServers.toString());
     }
 
     @Override

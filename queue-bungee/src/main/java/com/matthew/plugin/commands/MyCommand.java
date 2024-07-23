@@ -31,10 +31,10 @@ public class MyCommand extends Command {
 
         String message = chatModule.buildMessage("test", player.getName());
 
-        queueModule.getQueue(message).addPlayer(player);
+        //queueModule.getQueue(message).addPlayer(player);
 
         //Message should actually be the server name but that's fine for now
-        PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, message);
+        PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, "");
         plugin.getProxy().getPluginManager().callEvent(event);
 
         player.sendMessage(new TextComponent(message));

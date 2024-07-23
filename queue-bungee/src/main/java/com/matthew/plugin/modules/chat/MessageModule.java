@@ -65,7 +65,6 @@ public class MessageModule implements Module {
 
         if (cache != null) {
             plugin.getLogger().info("Loaded messages from messages.yml: " + cache.keySet());
-            plugin.getLogger().info("Test message: " + cache.get("messages.test"));
         }
     }
 
