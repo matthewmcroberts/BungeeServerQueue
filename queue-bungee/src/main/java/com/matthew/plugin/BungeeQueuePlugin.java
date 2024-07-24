@@ -2,7 +2,7 @@ package com.matthew.plugin;
 
 import com.matthew.plugin.commands.MyCommand;
 import com.matthew.plugin.listeners.QueueListener;
-import com.matthew.plugin.modules.chat.MessageModule;
+import com.matthew.plugin.modules.messages.MessageModule;
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.modules.server.ServerModule;
