@@ -1,8 +1,9 @@
-package com.matthew.plugin.modules.chat;
+package com.matthew.plugin.modules.messages;
 
 import com.matthew.plugin.api.Module;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
 
@@ -20,12 +21,16 @@ public class MessageModule implements Module {
 
     private Map<String, String> cache;
 
-    public String buildMessage(String key, Object... args) {
+    public TextComponent buildMessage(String key) {
+        return this.buildMessage(key, (Object) null);
+    }
+
+    public TextComponent buildMessage(String key, Object... args) {
         String message = cache.get(key);
 
         if (message == null) {
             plugin.getLogger().warning("Message key '" + key + "' not found");
-            return "";
+            return new TextComponent();
         }
 
         message = ChatColor.translateAlternateColorCodes('&', message);
@@ -35,7 +40,7 @@ public class MessageModule implements Module {
                 message = message.replace("<" + i + ">", String.valueOf(args[i]));
             }
         }
-        return message;
+        return new TextComponent(message);
     }
 
     @Override
