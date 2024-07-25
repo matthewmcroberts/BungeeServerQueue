@@ -20,10 +20,8 @@ public class PlayerPriorityBlockingQueue implements PriorityQueue {
 
     @Override
     public void addPlayer(@NonNull ProxiedPlayer player) {
-        synchronized (this) {
-            if (!containsPlayer(player)) {
-                queue.put(new QueuedPlayer(player));
-            }
+        if (!containsPlayer(player)) {
+            queue.put(new QueuedPlayer(player));
         }
     }
 
