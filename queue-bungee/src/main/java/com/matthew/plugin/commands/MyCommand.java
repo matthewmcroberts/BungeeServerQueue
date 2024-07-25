@@ -74,18 +74,28 @@ public class MyCommand extends Command implements TabExecutor {
             return;
         }
 
-        if (args.length == 1) {
-            commandActions.getOrDefault(args[0].toLowerCase(), p -> p.sendMessage(USAGE_MESSAGE)).accept(player);
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("join")) {
-            player.sendMessage(new TextComponent("Joining: " + args[1]));
+        //Value is either: help, list, leave, or join
+        String actionArg = args[0].toLowerCase();
 
-            PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, args[1]);
-            plugin.getProxy().getPluginManager().callEvent(event);
+        Consumer<ProxiedPlayer> action = commandActions.getOrDefault(actionArg, p -> p.sendMessage(USAGE_MESSAGE));
+
+        if (actionArg.equals("join")) {
+            if (args.length == 2) {
+                action.accept(player);
+                PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, args[1]);
+                plugin.getProxy().getPluginManager().callEvent(event);
+            } else {
+                player.sendMessage(USAGE_MESSAGE);
+            }
+            return;
+        }
+
+        if (args.length == 1) {
+            action.accept(player);
         } else {
             player.sendMessage(USAGE_MESSAGE);
         }
     }
-
 
     @Override
     public Iterable<String> onTabComplete(CommandSender commandSender, String[] args) {
@@ -116,10 +126,24 @@ public class MyCommand extends Command implements TabExecutor {
     }
 
     private void registerActions() {
-        commandActions.put("help", player -> player.sendMessage(new TextComponent("help")));
-        commandActions.put("list", player -> player.sendMessage(new TextComponent("list")));
-        commandActions.put("leave", player -> player.sendMessage(new TextComponent("leave")));
-        commandActions.put("join", player -> player.sendMessage(new TextComponent("Incorrect Usage: /testing join <server>")));
+        commandActions.put("help", player -> {
+            //Logic for command argument help goes here
+            player.sendMessage(new TextComponent("help"));
+        });
 
+        commandActions.put("list", player -> {
+            //Logic for command argument list goes here
+            player.sendMessage(new TextComponent("list"));
+        });
+
+        commandActions.put("leave", player -> {
+            //Logic for command argument leave goes here
+            player.sendMessage(new TextComponent("leave"));
+        });
+
+        commandActions.put("join", player -> {
+            //Logic for command argument join goes here
+            player.sendMessage(new TextComponent("join"));
+        });
     }
 }
