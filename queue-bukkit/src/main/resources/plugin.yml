@@ -1,0 +1,11 @@
+name: ${pluginName}
+version: ${pluginVersion}
+description: ${description}
+main: ${mainClass}
+author: ${author}
+
+# DO NOT EDIT. This api-version is used for maximum backward compatibility.
+api-version: 1.13
+
+commands:
+  test:

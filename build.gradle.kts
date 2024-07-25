@@ -1,5 +1,13 @@
 plugins {
+    id("java")
     `java-library`
+}
+
+ext {
+    set("pluginName", "BungeeQueuePlugin")
+    set("pluginVersion", "1.0.0")
+    set("description", "A BungeeCord plugin with a queue system")
+    set("author", "Matthew (GoofIt/Mahht)")
 }
 
 group = "com.matthew.plugin"
@@ -26,12 +34,4 @@ subprojects {
     tasks.test {
         useJUnitPlatform()
     }
-}
-
-ext {
-    set("pluginName", "BungeeQueuePlugin")
-    set("pluginVersion", "1.0.0")
-    set("mainClass", "com.matthew.plugin.BungeeQueuePlugin")
-    set("description", "A BungeeCord plugin with a queue system")
-    set("author", "Matthew")
 }
