@@ -23,8 +23,10 @@ import java.util.concurrent.TimeUnit;
 public final class ChannelMessaging implements Listener {
 
     private static Plugin plugin;
+
     @Getter
     private static final ChannelMessaging instance = new ChannelMessaging();
+
     private final ConcurrentMap<String, CompletableFuture<Boolean>> permissionFutures = new ConcurrentHashMap<>();
 
     /**
@@ -40,7 +42,7 @@ public final class ChannelMessaging implements Listener {
     /**
      * Requests permission check from the server.
      *
-     * @param player The player for whom the permission is being checked.
+     * @param player     The player for whom the permission is being checked.
      * @param permission The permission node to check.
      * @return A CompletableFuture that will complete with the result of the permission check.
      */
