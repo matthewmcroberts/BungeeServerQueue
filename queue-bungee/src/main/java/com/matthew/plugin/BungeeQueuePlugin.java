@@ -7,6 +7,7 @@ import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.modules.server.ServerModule;
 import com.matthew.plugin.modules.settings.SettingsModule;
+import com.matthew.plugin.util.ChannelMessaging;
 import net.md_5.bungee.api.plugin.Plugin;
 
 
@@ -33,6 +34,9 @@ public class BungeeQueuePlugin extends Plugin {
 
         getLogger().info("Registering listener(s)");
         getProxy().getPluginManager().registerListener(this, new QueueListener(this));
+
+        getLogger().info("Registering channel messaging");
+        ChannelMessaging.getInstance().register(this);
 
         getLogger().info("Registering command(s)");
         getProxy().getPluginManager().registerCommand(this, new MyCommand(this));
