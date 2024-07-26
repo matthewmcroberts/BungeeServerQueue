@@ -20,7 +20,12 @@ ACTIONBAR:
 
 #Permission nodes
 #Permissions assigned to a player will determine their priority in queue
-#Note: Normal queue priority currently requires no node (probably going to change)
+#Note:
+# - Normal queue priority currently requires no node (probably going to change)
+# - Additionally, permissions are checked using bukkit server's permission plugin, not the proxy's bungee permissions
+#
+# If you are encountering an error with your permissions, ensure that the queue-bukkit.jar file is properly placed in
+# your corresponding queue server's plugin folder, NOT the proxy's plugin folder
 PERMISSIONS:
   PRIORITY:
     HIGH: "queue.priority.high"
