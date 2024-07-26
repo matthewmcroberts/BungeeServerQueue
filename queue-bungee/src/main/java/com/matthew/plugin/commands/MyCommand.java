@@ -7,6 +7,7 @@ import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.modules.queue.events.PlayerPriorityQueueJoinEvent;
 import com.matthew.plugin.modules.settings.SettingsConstants;
 import com.matthew.plugin.modules.settings.SettingsModule;
+import com.matthew.plugin.util.ChannelMessaging;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -57,44 +58,41 @@ public class MyCommand extends Command implements TabExecutor {
             return;
         }
 
-        /*
-        TODO: Permissions obviously are not going to work right now. Need to set up a messaging channel to the bukkit server on the proxy
+        ChannelMessaging.getInstance().hasPermission(player, usageNodeOpt.get()).thenAccept(hasPermission -> {
+            if (hasPermission) {
+                final TextComponent USAGE_MESSAGE = messages.buildMessage("usage");
 
-        String usageNode = usageNodeOpt.get();
-        if (!player.hasPermission(usageNode)) {
-            player.sendMessage(new TextComponent("No permission"));
-            return;
-        }
-         */
+                if (args.length == 0) {
+                    player.sendMessage(USAGE_MESSAGE);
+                    return;
+                }
 
-        final TextComponent USAGE_MESSAGE = messages.buildMessage("usage");
+                //Value (if usage is correct) is either: help, list, leave, or join
+                String actionArg = args[0].toLowerCase();
 
-        if (args.length == 0) {
-            player.sendMessage(USAGE_MESSAGE);
-            return;
-        }
+                Consumer<ProxiedPlayer> action = commandActions.getOrDefault(actionArg, p -> p.sendMessage(USAGE_MESSAGE));
 
-        //Value is either: help, list, leave, or join
-        String actionArg = args[0].toLowerCase();
+                if (actionArg.equals("join")) {
+                    if (args.length == 2) {
+                        action.accept(player);
+                        PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, args[1]);
+                        plugin.getProxy().getPluginManager().callEvent(event);
+                    } else {
+                        player.sendMessage(USAGE_MESSAGE);
+                    }
+                    return;
+                }
 
-        Consumer<ProxiedPlayer> action = commandActions.getOrDefault(actionArg, p -> p.sendMessage(USAGE_MESSAGE));
-
-        if (actionArg.equals("join")) {
-            if (args.length == 2) {
-                action.accept(player);
-                PlayerPriorityQueueJoinEvent event = new PlayerPriorityQueueJoinEvent(player, args[1]);
-                plugin.getProxy().getPluginManager().callEvent(event);
-            } else {
-                player.sendMessage(USAGE_MESSAGE);
+                if (args.length == 1) {
+                    action.accept(player);
+                } else {
+                    player.sendMessage(USAGE_MESSAGE);
+                }
             }
-            return;
-        }
-
-        if (args.length == 1) {
-            action.accept(player);
-        } else {
-            player.sendMessage(USAGE_MESSAGE);
-        }
+        }).exceptionally(ex -> {
+            plugin.getLogger().severe("Error checking permission for player " + player.getName() + ": " + ex.getMessage());
+            return null;
+        });
     }
 
     @Override
