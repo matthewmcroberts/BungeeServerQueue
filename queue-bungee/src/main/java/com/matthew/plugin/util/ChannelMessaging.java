@@ -25,14 +25,6 @@ public final class ChannelMessaging implements Listener {
     private static final ChannelMessaging instance = new ChannelMessaging();
     private final ConcurrentMap<String, CompletableFuture<Boolean>> permissionFutures = new ConcurrentHashMap<>();
 
-    static {
-        ProxyServer.getInstance().getPluginManager().registerListener(plugin, instance);
-    }
-
-    public void register(Plugin plugin) {
-        ChannelMessaging.plugin = plugin;
-    }
-
     public CompletableFuture<Boolean> hasPermission(final ProxiedPlayer player, final String permission) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         String key = player.getUniqueId().toString() + ":" + permission;
@@ -87,5 +79,10 @@ public final class ChannelMessaging implements Listener {
         } catch (IOException e) {
             plugin.getLogger().severe("Error on plugin message receive: " + e.getMessage());
         }
+    }
+
+    public void register(Plugin plugin) {
+        ChannelMessaging.plugin = plugin;
+        ProxyServer.getInstance().getPluginManager().registerListener(plugin, instance);
     }
 }
