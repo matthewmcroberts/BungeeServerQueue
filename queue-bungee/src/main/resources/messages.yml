@@ -1,2 +1,9 @@
+
+#<0> = Player Name
 test: "&6Hello <0>!"
+
 usage: "&cIncorrect usage"
+
+noperm: "&cYou do not have permission to perform this command"
+
+commanderror: "&cAn error occurred while performing this command, please try again in a moment."
