@@ -16,6 +16,11 @@ public class BungeeQueuePlugin extends Plugin {
     private ModuleManager moduleManager;
 
     @Override
+    public void onLoad() {
+
+    }
+
+    @Override
     public void onEnable() {
 
         if (!getDataFolder().exists()) {

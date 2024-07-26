@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utility class for handling plugin messaging between BungeeCord and Bukkit.
@@ -49,7 +50,7 @@ public final class ChannelMessaging implements Listener {
     public CompletableFuture<Boolean> hasPermission(final ProxiedPlayer player, final String permission) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         String key = player.getUniqueId().toString() + ":" + permission;
-        permissionFutures.putIfAbsent(key, future);
+        permissionFutures.put(key, future);
 
         try (ByteArrayOutputStream b = new ByteArrayOutputStream();
              DataOutputStream out = new DataOutputStream(b)) {
@@ -61,13 +62,6 @@ public final class ChannelMessaging implements Listener {
         } catch (IOException e) {
             future.completeExceptionally(e);
         }
-
-        ProxyServer.getInstance().getScheduler().schedule(plugin, () -> {
-            CompletableFuture<Boolean> f = permissionFutures.remove(key);
-            if (f != null && !f.isDone()) {
-                f.complete(false);
-            }
-        }, 5, TimeUnit.SECONDS);
 
         return future;
     }
@@ -88,8 +82,8 @@ public final class ChannelMessaging implements Listener {
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
                 if (player != null) {
                     String key = player.getUniqueId().toString() + ":" + permission;
-                    CompletableFuture<Boolean> future = permissionFutures.get(key);
-                    if (future != null) {
+                    CompletableFuture<Boolean> future = permissionFutures.remove(key);
+                    if (future != null && !future.isDone()) {
                         future.complete(hasPermission);
                     }
                 }
