@@ -14,8 +14,7 @@ import java.io.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
 
 /**
  * Utility class for handling plugin messaging between BungeeCord and Bukkit.
@@ -58,7 +57,7 @@ public final class ChannelMessaging implements Listener {
             out.writeUTF("CheckPermission");
             out.writeUTF(player.getName());
             out.writeUTF(permission);
-            player.getServer().sendData("BungeePerms", b.toByteArray());
+            player.getServer().sendData("BungeeQueue", b.toByteArray());
         } catch (IOException e) {
             future.completeExceptionally(e);
         }
@@ -68,7 +67,7 @@ public final class ChannelMessaging implements Listener {
 
     @EventHandler
     public void onPluginMessage(final PluginMessageEvent event) {
-        if (!event.getTag().equals("BungeePerms")) {
+        if (!event.getTag().equals("BungeeQueue")) {
             return;
         }
 
