@@ -42,7 +42,7 @@ public class BungeeQueuePlugin extends Plugin {
 
         getLogger().info("Registering channel messaging");
         getProxy().registerChannel("BungeeCord");
-        getProxy().registerChannel("BungeePerms");
+        getProxy().registerChannel("BungeeQueue");
         ChannelMessaging.getInstance().register(this);
 
         getLogger().info("Registering command(s)");
