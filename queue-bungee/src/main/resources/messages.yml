@@ -2,7 +2,7 @@
 #<0> = Player Name
 test: "&6Hello <0>!"
 
-usage: "&cIncorrect usage, please use: \n - /testing help \n - /testing leave \n - /testing join <server> \n - /testing list"
+usage: "&cIncorrect usage, please use: \n - /queue help \n - /queue leave \n - /queue join <server> \n - /queue list"
 
 noperm: "&cYou do not have permission to perform this command"
 

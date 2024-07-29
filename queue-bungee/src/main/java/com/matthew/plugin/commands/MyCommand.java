@@ -35,7 +35,7 @@ public class MyCommand extends Command implements TabExecutor {
     private final Map<String, Consumer<ProxiedPlayer>> commandActions = new HashMap<>();
 
     public MyCommand(Plugin plugin) {
-        super("testing");
+        super("queue");
         this.plugin = plugin;
         registerActions();
     }
