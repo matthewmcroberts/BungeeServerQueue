@@ -17,7 +17,7 @@ tasks.processResources {
             mapOf(
                 "pluginName" to rootProject.extra["pluginName"],
                 "pluginVersion" to rootProject.extra["pluginVersion"],
-                "mainClass" to extra["mainClass"],
+                "mainClass" to project.extra["mainClass"],
                 "description" to rootProject.extra["description"],
                 "author" to rootProject.extra["author"]
             )
