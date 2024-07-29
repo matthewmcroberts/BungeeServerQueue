@@ -57,8 +57,15 @@ public final class ChannelMessaging implements Listener {
             out.writeUTF("CheckPermission");
             out.writeUTF(player.getName());
             out.writeUTF(permission);
-            player.getServer().sendData("BungeeQueue", b.toByteArray());
+
+            if (player.getServer() != null) {
+                player.getServer().sendData("bungee:queue", b.toByteArray());
+            } else {
+                plugin.getLogger().severe("Player is not connected to a server: " + player.getName());
+                future.completeExceptionally(new IllegalStateException("Player is not connected to a server."));
+            }
         } catch (IOException e) {
+            plugin.getLogger().severe("Error while sending data: " + e.getMessage());
             future.completeExceptionally(e);
         }
 
@@ -67,28 +74,41 @@ public final class ChannelMessaging implements Listener {
 
     @EventHandler
     public void onPluginMessage(final PluginMessageEvent event) {
-        if (!event.getTag().equals("BungeeQueue")) {
+        if (!event.getTag().equals("bungee:queue")) {
             return;
         }
 
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()))) {
             String subChannel = in.readUTF();
-            if (subChannel.equals("PermissionResponse")) {
+
+            if ("PermissionResponse".equals(subChannel)) {
                 String playerName = in.readUTF();
+
                 String permission = in.readUTF();
+
                 boolean hasPermission = in.readBoolean();
 
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
                 if (player != null) {
                     String key = player.getUniqueId().toString() + ":" + permission;
+
                     CompletableFuture<Boolean> future = permissionFutures.remove(key);
                     if (future != null && !future.isDone()) {
                         future.complete(hasPermission);
+                    } else {
+                        plugin.getLogger().warning("Future is null or already done for key: " + key);
                     }
+                } else {
+                    plugin.getLogger().warning("Player not found: " + playerName);
                 }
+            } else {
+                plugin.getLogger().warning("Unknown subChannel: " + subChannel);
             }
         } catch (IOException e) {
             plugin.getLogger().severe("Error processing plugin message: " + e.getMessage());
+        } catch (Exception e) {
+            plugin.getLogger().severe("Unexpected error processing plugin message: " + e.getMessage());
         }
     }
 }
+

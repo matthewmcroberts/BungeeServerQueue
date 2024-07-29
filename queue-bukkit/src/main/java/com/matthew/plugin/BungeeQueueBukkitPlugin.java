@@ -11,37 +11,47 @@ public class BungeeQueueBukkitPlugin extends JavaPlugin implements PluginMessage
 
     @Override
     public void onEnable() {
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeQueue", this);
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeQueue");
+        // Use a valid channel name with a ':' separator
+        getServer().getMessenger().registerIncomingPluginChannel(this, "bungee:queue", this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "bungee:queue");
         Bukkit.getLogger().info("BungeeQueueBukkitPlugin started");
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        // Unregister channels to clean up
+        getServer().getMessenger().unregisterIncomingPluginChannel(this, "bungee:queue");
+        getServer().getMessenger().unregisterOutgoingPluginChannel(this, "bungee:queue");
+    }
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!channel.equals("BungeePerms")) {
+        if (!channel.equals("bungee:queue")) {
             return;
         }
 
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
             String subChannel = in.readUTF();
+
             if (subChannel.equals("CheckPermission")) {
                 String playerName = in.readUTF();
                 String permission = in.readUTF();
                 Player targetPlayer = Bukkit.getPlayer(playerName);
                 boolean hasPermission = targetPlayer != null && targetPlayer.hasPermission(permission);
-
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 DataOutputStream out = new DataOutputStream(b);
                 out.writeUTF("PermissionResponse");
+                out.writeUTF(playerName);
+                out.writeUTF(permission);
                 out.writeBoolean(hasPermission);
-                player.sendPluginMessage(this, "BungeeQueue", b.toByteArray());
+
+                player.sendPluginMessage(this, "bungee:queue", b.toByteArray());
             }
         } catch (IOException e) {
-            getLogger().severe(e.getMessage());
+            getLogger().severe("Error processing plugin message: " + e.getMessage());
+        } catch (Exception e) {
+            getLogger().severe("Unexpected error processing plugin message: " + e.getMessage());
         }
     }
 }
