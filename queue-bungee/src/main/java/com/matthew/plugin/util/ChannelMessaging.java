@@ -83,26 +83,20 @@ public final class ChannelMessaging implements Listener {
 
             if ("PermissionResponse".equals(subChannel)) {
                 String playerName = in.readUTF();
-
                 String permission = in.readUTF();
-
                 boolean hasPermission = in.readBoolean();
 
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerName);
                 if (player != null) {
                     String key = player.getUniqueId().toString() + ":" + permission;
-
                     CompletableFuture<Boolean> future = permissionFutures.remove(key);
+
                     if (future != null && !future.isDone()) {
                         future.complete(hasPermission);
-                    } else {
-                        plugin.getLogger().warning("Future is null or already done for key: " + key);
                     }
                 } else {
                     plugin.getLogger().warning("Player not found: " + playerName);
                 }
-            } else {
-                plugin.getLogger().warning("Unknown subChannel: " + subChannel);
             }
         } catch (IOException e) {
             plugin.getLogger().severe("Error processing plugin message: " + e.getMessage());
