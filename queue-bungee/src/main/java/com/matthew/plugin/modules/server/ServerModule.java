@@ -38,20 +38,30 @@ public class ServerModule implements Module {
 
     private final SettingsModule settings = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
 
-    public CompletableFuture<ServerStatus> checkMainServerStatus() {
-        return CompletableFuture.supplyAsync(() -> {
-            final Optional<String> MAIN_SERVER_OPTIONAL = settings.getString(SettingsConstants.CONFIG_MAIN_SERVER);
+    public ServerStatus checkMainServerStatus() {
+        final Optional<String> MAIN_SERVER_OPTIONAL = settings.getString(SettingsConstants.CONFIG_MAIN_SERVER);
 
-            if (MAIN_SERVER_OPTIONAL.isEmpty()) {
-                throw new MainServerNotConfiguredException("Main server is not configured. Please check your settings.");
-            }
+        if (MAIN_SERVER_OPTIONAL.isEmpty()) {
+            throw new MainServerNotConfiguredException("Main server is not configured. Please check your settings.");
+        }
 
-            return checkServerStatus(MAIN_SERVER_OPTIONAL.get());
-        }, executor);
+        return checkServerStatus(MAIN_SERVER_OPTIONAL.get());
     }
 
-    public CompletableFuture<ServerStatus> checkQueueServerStatus(@NonNull final String serverName) {
-        return CompletableFuture.supplyAsync(() -> checkServerStatus(serverName), executor);
+    public ServerStatus checkQueueServerStatus(@NonNull final String serverName) {
+
+        //Important for ensuring that the main thread is not blocked during socket connection check
+        Future<ServerStatus> future = executor.submit(() -> checkServerStatus(serverName));
+
+        try {
+            return future.get(2, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            proxy.getLogger().warning("'" + serverName + "' status check timed out.");
+            return ServerStatus.OFFLINE;
+        } catch (Exception e) {
+            proxy.getLogger().warning("'" + serverName + "' status check failed: " + e.getMessage());
+            return ServerStatus.OFFLINE;
+        }
     }
 
     public ServerStatus checkIfExists(@NonNull final String serverName) {
