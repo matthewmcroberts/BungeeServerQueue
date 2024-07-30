@@ -104,6 +104,7 @@ public class ServerModule implements Module {
 
     private ServerStatus checkServerStatus(String serverName) {
         ServerStatus existenceStatus = checkIfExists(serverName);
+
         if (existenceStatus == ServerStatus.NOT_FOUND) {
             proxy.getLogger().warning("'" + serverName + "' not found. Please check your bungee configuration.");
             return ServerStatus.NOT_FOUND;
@@ -112,8 +113,9 @@ public class ServerModule implements Module {
         try {
             ServerInfo serverInfo = proxy.getServerInfo(serverName);
             InetSocketAddress address = (InetSocketAddress) serverInfo.getSocketAddress();
+
             try (Socket socket = new Socket()) {
-                socket.connect(address, 1000); // Will throw exception if not reachable
+                socket.connect(address, 1000);
                 return ServerStatus.ONLINE;
             }
         } catch (Exception e) {
