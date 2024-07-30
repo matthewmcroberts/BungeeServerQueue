@@ -1,6 +1,9 @@
 package com.matthew.plugin.modules.messages;
 
 import com.matthew.plugin.api.Module;
+import com.matthew.plugin.modules.ModuleManager;
+import com.matthew.plugin.modules.server.ServerModule;
+import com.matthew.plugin.modules.settings.SettingsModule;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 public class MessageModule implements Module {
@@ -20,6 +25,8 @@ public class MessageModule implements Module {
     private final Plugin plugin;
 
     private Map<String, String> cache;
+
+    private final ServerModule module = ModuleManager.getInstance().getRegisteredModule(ServerModule.class);
 
     public TextComponent buildMessage(String key) {
         return this.buildMessage(key, (Object) null);
@@ -42,6 +49,20 @@ public class MessageModule implements Module {
         }
         return new TextComponent(message);
     }
+
+    public TextComponent buildServerListMessage(List<String> servers) {
+        StringBuilder messageBuilder = new StringBuilder();
+
+        for (String server : servers) {
+            ServerModule.ServerStatus status = module.checkQueueServerStatus(server);
+            messageBuilder.append(server).append(" - ").append(status.getText()).append("\n");
+        }
+
+        String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString());
+
+        return new TextComponent(message);
+    }
+
 
     @Override
     public void setUp() {
