@@ -3,9 +3,9 @@ package com.matthew.plugin.modules.messages;
 import com.matthew.plugin.api.Module;
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.server.ServerModule;
-import com.matthew.plugin.modules.settings.SettingsModule;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class MessageModule implements Module {
@@ -50,18 +53,41 @@ public class MessageModule implements Module {
         return new TextComponent(message);
     }
 
-    public TextComponent buildServerListMessage(List<String> servers) {
-        StringBuilder messageBuilder = new StringBuilder();
+    //Hmm... starting to realize this might be overkill for just checking a quick socket connection
+    public void buildServerListMessage(List<String> servers, Consumer<TextComponent> callback) {
+        List<CompletableFuture<String>> futures = new ArrayList<>();
 
         for (String server : servers) {
-            ServerModule.ServerStatus status = module.checkQueueServerStatus(server);
-            messageBuilder.append(server).append(" - ").append(status.getText()).append("\n");
+            CompletableFuture<String> future = new CompletableFuture<>();
+            module.checkQueueServerStatus(server, status -> {
+                String serverStatus = server + " - " + status.getText();
+                future.complete(serverStatus);
+            });
+            futures.add(future);
         }
 
-        String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString());
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-        return new TextComponent(message);
+        allOf.thenRun(() -> {
+            StringBuilder messageBuilder = new StringBuilder();
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    messageBuilder.append(futures.get(i).get());
+                    if (i < futures.size() - 1) {
+                        messageBuilder.append("\n");
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().severe("Error completing all futures: " + e.getMessage());
+                }
+            }
+
+            String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString());
+
+            // Ensure callback runs on the main thread
+            ProxyServer.getInstance().getScheduler().schedule(plugin, () -> callback.accept(new TextComponent(message)), 0, TimeUnit.SECONDS);
+        });
     }
+
 
 
     @Override

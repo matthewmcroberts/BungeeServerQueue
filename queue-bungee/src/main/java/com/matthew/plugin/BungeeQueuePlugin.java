@@ -29,10 +29,10 @@ public class BungeeQueuePlugin extends Plugin {
 
         getLogger().info("Registering module(s)");
         moduleManager = ModuleManager.getInstance();
-        moduleManager.registerModule(new QueueModule())
-                .registerModule(new ServerModule())
-                .registerModule(new MessageModule(this))
-                .registerModule(new SettingsModule(this));
+        moduleManager.registerModule(new SettingsModule(this))
+                .registerModule(new QueueModule())
+                .registerModule(new ServerModule(this))
+                .registerModule(new MessageModule(this));
 
         getLogger().info("Setting up module(s)");
         moduleManager.setUp();

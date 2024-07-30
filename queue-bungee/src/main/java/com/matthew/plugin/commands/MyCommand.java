@@ -9,6 +9,7 @@ import com.matthew.plugin.modules.settings.SettingsConstants;
 import com.matthew.plugin.modules.settings.SettingsModule;
 import com.matthew.plugin.util.ChannelMessaging;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -71,7 +72,7 @@ public class MyCommand extends Command implements TabExecutor {
         }).exceptionally(ex -> {
             final TextComponent COMMAND_ERROR = messages.buildMessage("commanderror");
 
-            plugin.getLogger().severe("Error checking permission for player " + player.getName() + ": " + ex.getMessage());
+            plugin.getLogger().severe("Error running command for player " + player.getName() + ": " + ex.getMessage());
             player.sendMessage(COMMAND_ERROR);
             return null;
         });
@@ -141,8 +142,7 @@ public class MyCommand extends Command implements TabExecutor {
         });
 
         commandActions.put("list", player -> {
-            final TextComponent LIST_MESSAGE = messages.buildServerListMessage(settings.getAvailableServers());
-            player.sendMessage(LIST_MESSAGE);
+            messages.buildServerListMessage(serverModule.getAvailableServers(), player::sendMessage);
         });
 
         commandActions.put("leave", player -> {

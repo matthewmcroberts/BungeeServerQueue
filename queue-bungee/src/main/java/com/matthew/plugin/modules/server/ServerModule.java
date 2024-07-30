@@ -7,15 +7,19 @@ import com.matthew.plugin.modules.settings.SettingsConstants;
 import com.matthew.plugin.modules.settings.SettingsModule;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
+@RequiredArgsConstructor
 public class ServerModule implements Module {
 
     @Getter
@@ -36,6 +40,8 @@ public class ServerModule implements Module {
 
     private ExecutorService executor;
 
+    private final Plugin plugin;
+
     private final SettingsModule settings = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
 
     public ServerStatus checkMainServerStatus() {
@@ -48,20 +54,12 @@ public class ServerModule implements Module {
         return checkServerStatus(MAIN_SERVER_OPTIONAL.get());
     }
 
-    public ServerStatus checkQueueServerStatus(@NonNull final String serverName) {
+    public void checkQueueServerStatus(@NonNull final String serverName, @NonNull Consumer<ServerStatus> callback) {
+        executor.submit(() -> {
+            ServerStatus status = checkServerStatus(serverName);
 
-        //Important for ensuring that the main thread is not blocked during socket connection check
-        Future<ServerStatus> future = executor.submit(() -> checkServerStatus(serverName));
-
-        try {
-            return future.get(2, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            proxy.getLogger().warning("'" + serverName + "' status check timed out.");
-            return ServerStatus.OFFLINE;
-        } catch (Exception e) {
-            proxy.getLogger().warning("'" + serverName + "' status check failed: " + e.getMessage());
-            return ServerStatus.OFFLINE;
-        }
+            proxy.getScheduler().runAsync(plugin, () -> callback.accept(status));
+        });
     }
 
     public ServerStatus checkIfExists(@NonNull final String serverName) {
