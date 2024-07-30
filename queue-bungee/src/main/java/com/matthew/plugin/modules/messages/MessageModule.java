@@ -53,7 +53,10 @@ public class MessageModule implements Module {
         return new TextComponent(message);
     }
 
-    //Hmm... starting to realize this might be overkill for just checking a quick socket connection
+    public void buildServerListMessage(Consumer<TextComponent> callback) {
+        buildServerListMessage(module.getAvailableServers(), callback);
+    }
+
     public void buildServerListMessage(List<String> servers, Consumer<TextComponent> callback) {
         List<CompletableFuture<String>> futures = new ArrayList<>();
 
@@ -83,7 +86,7 @@ public class MessageModule implements Module {
 
             String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString());
 
-            // Ensure callback runs on the main thread
+            // Ensure callback runs on the main thread because in our case we are using it to send a message to the player
             ProxyServer.getInstance().getScheduler().schedule(plugin, () -> callback.accept(new TextComponent(message)), 0, TimeUnit.SECONDS);
         });
     }

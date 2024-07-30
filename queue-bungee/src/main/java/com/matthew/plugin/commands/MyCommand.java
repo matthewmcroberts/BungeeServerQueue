@@ -142,7 +142,7 @@ public class MyCommand extends Command implements TabExecutor {
         });
 
         commandActions.put("list", player -> {
-            messages.buildServerListMessage(serverModule.getAvailableServers(), player::sendMessage);
+            messages.buildServerListMessage(player::sendMessage);
         });
 
         commandActions.put("leave", player -> {

@@ -58,7 +58,14 @@ public class ServerModule implements Module {
         executor.submit(() -> {
             ServerStatus status = checkServerStatus(serverName);
 
-            proxy.getScheduler().runAsync(plugin, () -> callback.accept(status));
+            /*
+            For now, run the callback function on the main thread just in case in the future, if thread-safety
+            is required, the acceptance of the callback function is already thread-safe
+            If I didn't implement it this way then it would be possible for the background threads, (executor's threads)
+            to manipulate data relating to the server or bungee api, rather than a thread related to the bungeecord
+            scheduler.
+            */
+             proxy.getScheduler().schedule(plugin, () -> callback.accept(status), 0, TimeUnit.SECONDS);
         });
     }
 
