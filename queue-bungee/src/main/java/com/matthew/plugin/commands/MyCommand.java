@@ -4,6 +4,7 @@ import com.matthew.plugin.modules.messages.MessageModule;
 import com.matthew.plugin.modules.ModuleManager;
 import com.matthew.plugin.modules.queue.QueueModule;
 import com.matthew.plugin.modules.queue.events.PlayerPriorityQueueJoinEvent;
+import com.matthew.plugin.modules.server.ServerModule;
 import com.matthew.plugin.modules.settings.SettingsConstants;
 import com.matthew.plugin.modules.settings.SettingsModule;
 import com.matthew.plugin.util.ChannelMessaging;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 public class MyCommand extends Command implements TabExecutor {
 
     private final Plugin plugin;
+
+    private final ServerModule serverModule = ModuleManager.getInstance().getRegisteredModule(ServerModule.class);
 
     private final MessageModule messages = ModuleManager.getInstance().getRegisteredModule(MessageModule.class);
 
@@ -133,13 +136,13 @@ public class MyCommand extends Command implements TabExecutor {
 
     private void registerActions() {
         commandActions.put("help", player -> {
-            // Logic for command argument help goes here
-            player.sendMessage(new TextComponent("help"));
+            final TextComponent HELP_MESSAGE = messages.buildMessage("help");
+            player.sendMessage(HELP_MESSAGE);
         });
 
         commandActions.put("list", player -> {
-            // Logic for command argument list goes here
-            player.sendMessage(new TextComponent("list"));
+            final TextComponent LIST_MESSAGE = messages.buildServerListMessage(settings.getAvailableServers());
+            player.sendMessage(LIST_MESSAGE);
         });
 
         commandActions.put("leave", player -> {
