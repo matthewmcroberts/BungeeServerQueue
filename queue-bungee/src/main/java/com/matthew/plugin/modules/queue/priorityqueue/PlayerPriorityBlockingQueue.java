@@ -9,21 +9,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 
-/**
- * Implementation of a thread-safe priority queue for players with duplicate entry checks.
- * Utilizes a PriorityBlockingQueue for the queue and a HashSet to track player IDs for duplicate checks.
- */
+
 public class PlayerPriorityBlockingQueue implements PriorityQueue {
 
-    // Priority queue to store players
     private final PriorityBlockingQueue<QueuedPlayer> queue;
 
     // Set to efficiently check for duplicate player entries
     private final Set<String> playerIds;
 
-    /**
-     * Constructor to initialize the priority queue and the set of player IDs.
-     */
     public PlayerPriorityBlockingQueue() {
         queue = new PriorityBlockingQueue<>();
         playerIds = new HashSet<>();
