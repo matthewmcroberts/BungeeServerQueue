@@ -1,3 +1,6 @@
+#IMPORTANT:
+#Do NOT change the name of the message keys. They will not work any longer and certain messages will be missing!
+
 usage: "&cIncorrect usage, please use: \n - /queue help \n - /queue leave \n - /queue join <server> \n - /queue list"
 
 help: "&cList of commands below: \n - /queue leave \n - /queue join <server> \n - /queue list"
@@ -5,3 +8,8 @@ help: "&cList of commands below: \n - /queue leave \n - /queue join <server> \n 
 noperm: "&cYou do not have permission to perform this command"
 
 commanderror: "&cAn error occurred while performing this command, please try again in a moment."
+
+serverstatusheader: "&cList of queue servers and their status:\n"
+
+#<0> = Server name, <1> = Server status
+serverstatus: "&c<0> - <1>"
