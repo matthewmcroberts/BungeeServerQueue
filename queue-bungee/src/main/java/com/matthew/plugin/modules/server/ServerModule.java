@@ -44,6 +44,7 @@ public class ServerModule implements Module {
 
     private final SettingsModule settings = ModuleManager.getInstance().getRegisteredModule(SettingsModule.class);
 
+    /*
     public ServerStatus checkMainServerStatus() {
         final Optional<String> MAIN_SERVER_OPTIONAL = settings.getString(SettingsConstants.CONFIG_MAIN_SERVER);
 
@@ -53,8 +54,9 @@ public class ServerModule implements Module {
 
         return checkServerStatus(MAIN_SERVER_OPTIONAL.get());
     }
+     */
 
-    public void checkQueueServerStatus(@NonNull final String serverName, @NonNull Consumer<ServerStatus> callback) {
+    public void checkQueueServerStatus(@NonNull final String serverName, @NonNull Consumer<String> callback) {
         executor.submit(() -> {
             ServerStatus status = checkServerStatus(serverName);
 
@@ -65,7 +67,7 @@ public class ServerModule implements Module {
             to manipulate data relating to the server or bungee api, rather than a thread related to the bungeecord
             scheduler.
             */
-             proxy.getScheduler().schedule(plugin, () -> callback.accept(status), 0, TimeUnit.SECONDS);
+             proxy.getScheduler().schedule(plugin, () -> callback.accept(status.getText()), 0, TimeUnit.SECONDS);
         });
     }
 
