@@ -9,7 +9,6 @@ import com.matthew.plugin.modules.settings.SettingsConstants;
 import com.matthew.plugin.modules.settings.SettingsModule;
 import com.matthew.plugin.util.ChannelMessaging;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -137,12 +136,11 @@ public class MyCommand extends Command implements TabExecutor {
 
     private void registerActions() {
         commandActions.put("help", player -> {
-            final TextComponent HELP_MESSAGE = messages.buildMessage("help");
-            player.sendMessage(HELP_MESSAGE);
+            messages.buildThenRunMessage("help", player::sendMessage);
         });
 
         commandActions.put("list", player -> {
-            messages.buildServerListMessage(player::sendMessage);
+            messages.buildThenRunServerListMessage(player::sendMessage);
         });
 
         commandActions.put("leave", player -> {

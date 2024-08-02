@@ -26,15 +26,26 @@ import java.util.function.Consumer;
 public class MessageModule implements Module {
 
     private final Plugin plugin;
-
     private Map<String, String> cache;
-
     private final ServerModule module = ModuleManager.getInstance().getRegisteredModule(ServerModule.class);
 
+    /**
+     * Builds a message from the cache based on the provided key.
+     *
+     * @param key the key to retrieve the message from the cache.
+     * @return the constructed TextComponent message.
+     */
     public TextComponent buildMessage(String key) {
         return this.buildMessage(key, (Object) null);
     }
 
+    /**
+     * Builds a message from the cache based on the provided key and formats it with provided arguments.
+     *
+     * @param key the key to retrieve the message from the cache.
+     * @param args the arguments to format the message.
+     * @return the constructed TextComponent message.
+     */
     public TextComponent buildMessage(String key, Object... args) {
         String message = cache.get(key);
 
@@ -53,18 +64,42 @@ public class MessageModule implements Module {
         return new TextComponent(message);
     }
 
-    public void buildServerListMessage(Consumer<TextComponent> callback) {
-        buildServerListMessage(module.getAvailableServers(), callback);
+    /**
+     * Builds a message from the cache and executes the provided callback with the result.
+     *
+     * @param key the key to retrieve the message from the cache.
+     * @param callback the callback to execute with the constructed message.
+     */
+    public void buildThenRunMessage(String key, Consumer<TextComponent> callback) {
+        callback.accept(this.buildMessage(key, (Object) null));
     }
 
-    public void buildServerListMessage(List<String> servers, Consumer<TextComponent> callback) {
-        List<CompletableFuture<String>> futures = new ArrayList<>();
+    /**
+     * Builds a message from the cache, formats it with provided arguments, and executes the provided callback with the result.
+     *
+     * @param key the key to retrieve the message from the cache.
+     * @param callback the callback to execute with the constructed message.
+     * @param args the arguments to format the message.
+     */
+    public void buildThenRunMessage(String key, Consumer<TextComponent> callback, Object... args) {
+        callback.accept(this.buildMessage(key, args));
+    }
 
-        for (String server : servers) {
-            CompletableFuture<String> future = new CompletableFuture<>();
+    /**
+     * Builds a message containing the status of all available servers and executes the provided callback with the result.
+     * The server statuses are checked asynchronously.
+     *
+     * @param callback the callback to execute with the constructed message.
+     */
+    public void buildThenRunServerListMessage(Consumer<TextComponent> callback) {
+        List<CompletableFuture<TextComponent>> futures = new ArrayList<>();
+        TextComponent headerMessage = buildMessage("serverstatusheader");
+
+        for (String server : module.getAvailableServers()) {
+            CompletableFuture<TextComponent> future = new CompletableFuture<>();
             module.checkQueueServerStatus(server, status -> {
-                String serverStatus = server + " - " + status.getText();
-                future.complete(serverStatus);
+                TextComponent serverStatusMessage = buildMessage("serverstatus", server, status);
+                future.complete(serverStatusMessage);
             });
             futures.add(future);
         }
@@ -72,30 +107,28 @@ public class MessageModule implements Module {
         CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
         allOf.thenRun(() -> {
-            StringBuilder messageBuilder = new StringBuilder();
+            TextComponent finalMessage = new TextComponent(headerMessage);
+
             for (int i = 0; i < futures.size(); i++) {
                 try {
-                    messageBuilder.append(futures.get(i).get());
+                    TextComponent serverStatusMessage = futures.get(i).get();
+                    finalMessage.addExtra(serverStatusMessage);
                     if (i < futures.size() - 1) {
-                        messageBuilder.append("\n");
+                        finalMessage.addExtra("\n");
                     }
                 } catch (Exception e) {
                     plugin.getLogger().severe("Error completing all futures: " + e.getMessage());
                 }
             }
 
-            String message = ChatColor.translateAlternateColorCodes('&', messageBuilder.toString());
-
             // Ensure callback runs on the main thread because in our case we are using it to send a message to the player
-            ProxyServer.getInstance().getScheduler().schedule(plugin, () -> callback.accept(new TextComponent(message)), 0, TimeUnit.SECONDS);
+            ProxyServer.getInstance().getScheduler().schedule(plugin, () -> callback.accept(finalMessage), 0, TimeUnit.SECONDS);
         });
     }
 
 
-
     @Override
     public void setUp() {
-
         File configFile = new File(plugin.getDataFolder(), "messages.yml");
 
         if (!configFile.exists()) {
@@ -125,6 +158,6 @@ public class MessageModule implements Module {
 
     @Override
     public void teardown() {
-
+        // No teardown actions needed
     }
 }
