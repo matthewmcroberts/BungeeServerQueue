@@ -77,7 +77,7 @@ public final class ChannelMessaging implements Listener {
         if (!event.getTag().equals("bungee:queue")) {
             return;
         }
-
+        
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()))) {
             String subChannel = in.readUTF();
 
