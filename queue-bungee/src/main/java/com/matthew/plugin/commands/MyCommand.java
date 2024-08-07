@@ -94,10 +94,8 @@ public class MyCommand extends Command implements TabExecutor {
                     .collect(Collectors.toList());
         } else if (args.length == 2 && "join".equalsIgnoreCase(arg0)) {
 
-            //TODO: This shouldn't be players, this should be online servers that have a queue to join
-
-            return plugin.getProxy().getPlayers().stream()
-                    .map(ProxiedPlayer::getName)
+            return serverModule.getAvailableServers()
+                    .stream()
                     .filter(name -> name.toLowerCase().startsWith(arg1))
                     .collect(Collectors.toList());
         }
