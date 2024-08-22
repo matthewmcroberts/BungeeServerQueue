@@ -1,6 +1,6 @@
 package com.matthew.plugin;
 
-import com.matthew.plugin.commands.MyCommand;
+import com.matthew.plugin.commands.QueueCommand;
 import com.matthew.plugin.listeners.QueueListener;
 import com.matthew.plugin.modules.messages.MessageModule;
 import com.matthew.plugin.modules.ModuleManager;
@@ -46,7 +46,7 @@ public class BungeeQueuePlugin extends Plugin {
         ChannelMessaging.getInstance().register(this);
 
         getLogger().info("Registering command(s)");
-        getProxy().getPluginManager().registerCommand(this, new MyCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new QueueCommand(this));
 
         getLogger().info("BungeeQueuePlugin is enabled");
     }

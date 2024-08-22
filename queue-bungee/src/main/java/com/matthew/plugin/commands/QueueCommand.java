@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class MyCommand extends Command implements TabExecutor {
+//TODO: Move command to individual servers instead of every server on the proxy
+
+public class QueueCommand extends Command implements TabExecutor {
 
     private final Plugin plugin;
 
@@ -37,7 +39,7 @@ public class MyCommand extends Command implements TabExecutor {
 
     private final Map<String, Consumer<ProxiedPlayer>> commandActions = new HashMap<>();
 
-    public MyCommand(Plugin plugin) {
+    public QueueCommand(Plugin plugin) {
         super("queue");
         this.plugin = plugin;
         registerActions();
